@@ -1,5 +1,6 @@
 import sys
-from numpy import NaN, Inf, arange, isscalar, asarray, array
+from numpy import NaN, Inf, arange, isscalar, asarray, array, mean
+import matplotlib.pyplot as plt
 
 def peakdet(v, delta, x = None):
 
@@ -49,10 +50,44 @@ def peakdet(v, delta, x = None):
 
     return array(maxtab), array(mintab)
 
+def findBaseline(ys):
+    print "starting findBaseline"
+    basel = mean(ys)
+    print "returning a baseline of", basel
+    return basel
+
+def findArea(peak,xs,ys,baseline):
+    print "starting findArea"
+    print peak
+    peaki = xs.index(peak[0])
+    print peaki
+    loweri=peaki
+    upperi=peaki
+    amp = peak[1]
+    amp2 = peak[1]
+
+    while amp > baseline:
+        loweri = loweri - 1
+        amp = ys[loweri]
+        lowerx = xs[loweri]
+    print "at amp", amp, "x", lowerx
+
+    while amp2 > baseline:
+        upperi = upperi + 1
+        amp2 = ys[upperi]
+        upperx = xs[upperi]
+    print "at amp2", amp2, "x", upperx
+
+def plotData(xs, ys, baseline):
+    plt.plot(x_axis, y_axis)
+    plt.plot((xs[0], xs[-1]), (baseline, baseline), 'r-')
+    plt.show()
+
 if __name__=="__main__":
     
-    #f = open('input.txt', 'r')
-    f = open('export_elpho_drug_ISZ.txt','r') 
+    f = open('input.txt', 'r')
+    #f = open('export_elpho_drug_ISZ.txt','r') 
+    #f = open('generated_data.txt','r') 
     pairs = f.readlines()
     x_axis = []
     y_axis = []
@@ -64,10 +99,15 @@ if __name__=="__main__":
         y_axis.append(float(values[1]))
 
     series = y_axis
-    maxtab, mintab = peakdet(series,10.0)
-    
+    maxtab, mintab = peakdet(series,0.1)
+    basel = findBaseline(series)
+
     for pair in maxtab:
         final_peaks.append((float(x_axis[int(pair[0])]), float(pair[1])))
 
     #print(maxtab)
     print(final_peaks)
+    for peak in final_peaks:
+        findArea(peak,x_axis,y_axis,basel)
+
+    plotData(x_axis,y_axis,basel)
