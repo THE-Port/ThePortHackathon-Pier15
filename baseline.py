@@ -1,6 +1,10 @@
 # from array import array 
 
+#AS OPPOSED TO USING THE MEAN FOR THE BASELINE 
+
+
 import numpy
+from numpy import asarray
 import peakutils
 from peakutils.plot import plot as pplot
 from matplotlib import pyplot
@@ -28,8 +32,11 @@ for pair in pairs:
 # calc_baseline(x_axis, y_axis)
 # print zeroed_y 
 
+x_axis = asarray(x_axis)
+y_axis = asarray(y_axis)
 
 base = peakutils.baseline(y_axis, 2)
 pyplot.figure(figsize=(10,6))
 pyplot.plot(x_axis, y_axis)
 pyplot.plot(x_axis, base)
+pyplot.show()
