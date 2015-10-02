@@ -19,7 +19,10 @@ from matplotlib import pyplot
 #         zeroed_y.append(baseline_y)
 #     return zeroed_y
 
-f= open('input.txt', 'r')
+#f= open('input.txt', 'r')
+#f = open('export_elpho_drug_ISZ.txt','r') 
+f = open('export_elpho_drug_ISZ+RIF.txt','r') 
+
 pairs = f.readlines()
 x_axis = []
 y_axis = []
