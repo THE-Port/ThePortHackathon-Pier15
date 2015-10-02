@@ -70,17 +70,34 @@ def findArea(peak,xs,ys,baseline):
         loweri = loweri - 1
         amp = ys[loweri]
         lowerx = xs[loweri]
-    print "at amp", amp, "x", lowerx
 
     while amp2 > baseline:
         upperi = upperi + 1
         amp2 = ys[upperi]
         upperx = xs[upperi]
-    print "at amp2", amp2, "x", upperx
 
-def plotData(xs, ys, baseline):
+    peak_area = 0.
+    inter = loweri
+    while inter < upperi:
+        peak_area = peak_area + (ys[inter]-baseline)
+        inter = inter + 1
+
+    print "peak area", peak_area
+
+    return lowerx, upperx, peak_area
+
+def plotData(xs, ys, baseline, lows, highs, peak_areas):
     plt.plot(x_axis, y_axis)
     plt.plot((xs[0], xs[-1]), (baseline, baseline), 'r-')
+    for i in xrange(len(lows)):
+        plt.plot((lows[i], lows[i]), (min(ys), max(ys)), 'g-')
+        plt.plot((highs[i], highs[i]), (min(ys), max(ys)), 'b-')
+
+        #ax.text(0.4, 0.7+(i*10.), 'peak pos here area %0.2f' %(peak_areas[i]),
+        #         verticalalignment='bottom', horizontalalignment='right',
+        #         transform=ax.transAxes,
+        #         color='green', fontsize=15)
+
     plt.show()
 
 if __name__=="__main__":
@@ -107,7 +124,14 @@ if __name__=="__main__":
 
     #print(maxtab)
     print(final_peaks)
-    for peak in final_peaks:
-        findArea(peak,x_axis,y_axis,basel)
 
-    plotData(x_axis,y_axis,basel)
+    lower_ranges = []
+    upper_ranges = []
+    peak_areas = []
+    for peak in final_peaks:
+        low, up, area = findArea(peak,x_axis,y_axis,basel)
+        lower_ranges.append(low)
+        upper_ranges.append(up)
+        peak_areas.append(area)
+
+    plotData(x_axis,y_axis,basel, lower_ranges, upper_ranges, peak_areas)
