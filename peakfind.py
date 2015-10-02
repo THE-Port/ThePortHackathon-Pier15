@@ -96,7 +96,7 @@ def plotData(xs, ys, baseline, lows, highs, peak_poss, peak_areas):
     for i in xrange(len(lows)):
         plt.plot((lows[i], lows[i]), (min(ys), max(ys)), 'g-')
         plt.plot((highs[i], highs[i]), (min(ys), max(ys)), 'b-')
-        strings.append('peak pos %0.2f area %0.2f' %(peak_poss[i][0],peak_areas[i]))
+        strings.append('peak %i pos %0.2f area %0.2f' %(i+1,peak_poss[i][0],peak_areas[i]))
 
     display_str = "\n".join(strings)
     ax.text(0.1, 0.7, display_str,
@@ -108,8 +108,8 @@ def plotData(xs, ys, baseline, lows, highs, peak_poss, peak_areas):
 
 if __name__=="__main__":
     
-    f = open('input.txt', 'r')
-    #f = open('export_elpho_drug_ISZ.txt','r') 
+    #f = open('input.txt', 'r')
+    f = open('export_elpho_drug_ISZ.txt','r') 
     #f = open('generated_data.txt','r') 
     pairs = f.readlines()
     x_axis = []
@@ -122,13 +122,15 @@ if __name__=="__main__":
         y_axis.append(float(values[1]))
 
     series = y_axis
-    maxtab, mintab = peakdet(series,0.1)
+    maxtab, mintab = peakdet(series,10.)
     basel = findBaseline(series)
 
     for pair in maxtab:
         final_peaks.append((float(x_axis[int(pair[0])]), float(pair[1])))
 
-    #print(maxtab)
+    if len(final_peaks) > 4:
+        final_peaks.pop(0)
+
     print(final_peaks)
 
     lower_ranges = []
@@ -139,5 +141,18 @@ if __name__=="__main__":
         lower_ranges.append(low)
         upper_ranges.append(up)
         peak_areas.append(area)
+
+    diff1 = final_peaks[2][0] / final_peaks[0][0]
+    diff2 = final_peaks[3][0] / final_peaks[1][0]
+    print diff1, diff2, abs(diff1/diff2)
+
+    ratio1 = (peak_areas[2]/final_peaks[2][0]) / (peak_areas[0]/final_peaks[0][0])
+    ratio2 = (peak_areas[3]/final_peaks[3][0]) / (peak_areas[1]/final_peaks[1][0])
+    print ratio1, ratio2, abs(ratio1/ratio2)
+
+    if (1-abs(ratio1/ratio2)) > 0.1 or (1-abs(diff1/diff2)) > 0.1:
+        print "fail"
+    else:
+        print "pass"
 
     plotData(x_axis,y_axis,basel, lower_ranges, upper_ranges, final_peaks, peak_areas)
