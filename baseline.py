@@ -106,8 +106,8 @@ cuty=[]
 for y in y_axis:
 	mean.append(float(basel))
 
-highcut = basel + ((variance-basel)/6)
-lowcut = basel - ((variance-basel)/6)
+highcut = basel + ((variance-basel)/15)
+lowcut = basel - ((variance-basel)/15)
 
 for a in range (0,len(two)):
 	if two[a][1] > lowcut and two[a][1] < highcut:
@@ -119,6 +119,7 @@ for m in range (0, len(cut)):
 	cuty.append(cut[m][1])
 
 base = peakutils.baseline(y_axis, 2)
+cutbase = peakutils.baseline(asarray(cuty), 2)
 
 pyplot.figure(figsize=(10,6))
 
@@ -126,6 +127,7 @@ pyplot.plot(x_axis, y_axis, label="data")
 pyplot.plot(x_axis, base, label = "baseline")
 pyplot.plot(x_axis, mean, label= "mean")
 pyplot.plot(cutx, cuty, label= "cut")
+pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
 
 pyplot.plot()
 pyplot.legend()
