@@ -86,17 +86,23 @@ def findArea(peak,xs,ys,baseline):
 
     return lowerx, upperx, peak_area
 
-def plotData(xs, ys, baseline, lows, highs, peak_areas):
+def plotData(xs, ys, baseline, lows, highs, peak_poss, peak_areas):
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
     plt.plot(x_axis, y_axis)
     plt.plot((xs[0], xs[-1]), (baseline, baseline), 'r-')
+    strings = []
     for i in xrange(len(lows)):
         plt.plot((lows[i], lows[i]), (min(ys), max(ys)), 'g-')
         plt.plot((highs[i], highs[i]), (min(ys), max(ys)), 'b-')
+        strings.append('peak pos %0.2f area %0.2f' %(peak_poss[i][0],peak_areas[i]))
 
-        #ax.text(0.4, 0.7+(i*10.), 'peak pos here area %0.2f' %(peak_areas[i]),
-        #         verticalalignment='bottom', horizontalalignment='right',
-        #         transform=ax.transAxes,
-        #         color='green', fontsize=15)
+    display_str = "\n".join(strings)
+    ax.text(0.1, 0.7, display_str,
+            verticalalignment='bottom', horizontalalignment='left',
+            transform=ax.transAxes,
+            color='green', fontsize=15)
 
     plt.show()
 
@@ -134,4 +140,4 @@ if __name__=="__main__":
         upper_ranges.append(up)
         peak_areas.append(area)
 
-    plotData(x_axis,y_axis,basel, lower_ranges, upper_ranges, peak_areas)
+    plotData(x_axis,y_axis,basel, lower_ranges, upper_ranges, final_peaks, peak_areas)
