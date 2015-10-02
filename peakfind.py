@@ -51,7 +51,8 @@ def peakdet(v, delta, x = None):
 
 if __name__=="__main__":
     
-    f = open('input.txt', 'r')
+    #f = open('input.txt', 'r')
+    f = open('export_elpho_drug_ISZ.txt','r') 
     pairs = f.readlines()
     x_axis = []
     y_axis = []
@@ -63,7 +64,7 @@ if __name__=="__main__":
         y_axis.append(float(values[1]))
 
     series = y_axis
-    maxtab, mintab = peakdet(series,0.1)
+    maxtab, mintab = peakdet(series,10.0)
     
     for pair in maxtab:
         final_peaks.append((float(x_axis[int(pair[0])]), float(pair[1])))
