@@ -1,4 +1,3 @@
-# from array import array 
 
 #FINDS BOTH BASELINE AND MEAN LINE
 
@@ -8,19 +7,7 @@ from numpy import NaN, Inf, arange, isscalar, asarray, array, mean
 import peakutils
 from peakutils.plot import plot as pplot
 from matplotlib import pyplot
-
-#f= open('input.txt', 'r')
-f = open('export_elpho_drug_ISZ.txt','r') 
-#f = open('export_elpho_drug_ISZ+RIF.txt','r') 
-
-pairs = f.readlines()
-x_axis = []
-y_axis = []
-
-for pair in pairs:
-	values = pair.split()
-	x_axis.append(float(values[0]))
-	y_axis.append(float(values[1]))
+#from peakfind.py import findArea
 
 def peakdet(v, delta, x = None):
 
@@ -74,9 +61,6 @@ def findMean(ys):
     basel = mean(ys)
     return basel
 
-maxtab, mintab = peakdet(y_axis,0.1)
-basel = findMean(y_axis)
-
 def cutdata(x_axis, y_axis, threshold):
     cut = []
     cutx = []
@@ -104,29 +88,51 @@ def meanarray(y_axis):
     meanval = findMean(y_axis)
     for y in y_axis:
         mean.append(float(meanval))
-    return mean   
+    return mean    
 
-cutx, cuty = cutdata(x_axis, y_axis,15)
-mean = meanarray(y_axis)
+#def removePeaks(peaks):
 
-x_axis = asarray(x_axis)
-y_axis = asarray(y_axis)
-cutx = asarray(cutx)
-cuty = asarray(cuty)
-mean = asarray(mean)
+if __name__=="__main__":
 
-base = peakutils.baseline(y_axis, 2)
-cutbase = peakutils.baseline(cuty, 2)
+    #f= open('input.txt', 'r')
+    f = open('export_elpho_drug_ISZ.txt','r') 
+    #f = open('export_elpho_drug_ISZ+RIF.txt','r') 
 
-pyplot.figure(figsize=(10,6))
+    pairs = f.readlines()
+    x_axis = []
+    y_axis = []
 
-pyplot.plot(x_axis, y_axis, label="data")
-pyplot.plot(x_axis, base, label = "baseline")
-pyplot.plot(x_axis, mean, label= "mean")
-pyplot.plot(cutx, cuty, label= "cut")
-pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
+    for pair in pairs:
+        values = pair.split()
+        x_axis.append(float(values[0]))
+        y_axis.append(float(values[1]))
 
-pyplot.plot()
-pyplot.legend()
+    maxtab, mintab = peakdet(y_axis,0.1)
+    basel = findMean(y_axis)
 
-pyplot.show()
+    cutx, cuty = cutdata(x_axis, y_axis,15)
+    mean = meanarray(y_axis)
+
+    x_axis = asarray(x_axis)
+    y_axis = asarray(y_axis)
+    cutx = asarray(cutx)
+    cuty = asarray(cuty)
+    mean = asarray(mean)
+
+    base = peakutils.baseline(y_axis, 2)
+    cutbase = peakutils.baseline(cuty, 2)
+
+    pyplot.figure(figsize=(10,6))
+
+    pyplot.plot(x_axis, y_axis, label="data")
+    pyplot.plot(x_axis, base, label = "baseline")
+    pyplot.plot(x_axis, mean, label= "mean")
+    pyplot.plot(cutx, cuty, label= "cut")
+    pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
+
+
+    pyplot.plot()
+    pyplot.legend()
+
+    pyplot.show()
+
