@@ -7,7 +7,7 @@ from numpy import NaN, Inf, arange, isscalar, asarray, array, mean
 import peakutils
 from peakutils.plot import plot as pplot
 from matplotlib import pyplot
-#from peakfind.py import findArea
+from peakfind import findArea, findBaseline
 
 def peakdet(v, delta, x = None):
 
@@ -90,25 +90,74 @@ def meanarray(y_axis):
         mean.append(float(meanval))
     return mean    
 
-#def removePeaks(peaks):
+def removePeaks(final_peaks, x_axis, y_axis):
+    basel = findMean(y_axis)
+    two = numpy.column_stack((x_axis,y_axis))
+    withoutpeaks = []
+    withoutpeaksx = []
+    withoutpeaksy = []
+    delete = []
+
+    for peak in final_peaks:
+        low, up, area = findArea(peak, x_axis, y_axis, basel)
+        print low
+        print up
+        for a in range (0,len(two)):
+            if two[a][0] > low and two[a][0] < up:
+                delete.append(two[a])
+
+    withoutpeaks = numpy.delete(two, delete)
+
+    for m in range (0, len(withoutpeaks)):
+        withoutpeaksx.append(withoutpeaks[m][0])
+        withoutpeaksy.append(withoutpeaks[m][1])
+
+    return withoutpeaksx, withoutpeaksy
 
 if __name__=="__main__":
 
     #f= open('input.txt', 'r')
-    f = open('export_elpho_drug_ISZ.txt','r') 
-    #f = open('export_elpho_drug_ISZ+RIF.txt','r') 
+    #f = open('export_elpho_drug_ISZ.txt','r') 
+    f = open('export_elpho_drug_ISZ+RIF.txt','r') 
 
     pairs = f.readlines()
     x_axis = []
     y_axis = []
+    final_peaks = []
+
 
     for pair in pairs:
         values = pair.split()
         x_axis.append(float(values[0]))
         y_axis.append(float(values[1]))
 
-    maxtab, mintab = peakdet(y_axis,0.1)
-    basel = findMean(y_axis)
+    series = y_axis
+    maxtab, mintab = peakdet(series,10.)
+
+
+    for pair in maxtab:
+        final_peaks.append((float(x_axis[int(pair[0])]), float(pair[1])))
+
+    if len(final_peaks) > 4:
+        final_peaks.pop(0)
+
+    print(final_peaks)
+
+    withoutpeaksx, withoutpeaksy = removePeaks(final_peaks, x_axis, y_axis)
+
+
+    # basel1, basel2 = findBaseline(series, final_peaks, x_axis)
+
+    # peaknum = 0 
+
+    # for peak in final_peaks:
+    #     if peaknum in [0,1]:
+    #         basel = basel1
+    #     else:
+    #         basel = basel2
+    #     low, up, area = findArea(peak,x_axis,y_axis,basel)
+    #     peaknum = peaknum + 1
+
 
     cutx, cuty = cutdata(x_axis, y_axis,15)
     mean = meanarray(y_axis)
@@ -118,17 +167,20 @@ if __name__=="__main__":
     cutx = asarray(cutx)
     cuty = asarray(cuty)
     mean = asarray(mean)
+    withoutpeaksx = asarray(withoutpeaksx)
+    withoutpeaksy = asarray(withoutpeaksy)
 
     base = peakutils.baseline(y_axis, 2)
     cutbase = peakutils.baseline(cuty, 2)
 
     pyplot.figure(figsize=(10,6))
 
-    pyplot.plot(x_axis, y_axis, label="data")
-    pyplot.plot(x_axis, base, label = "baseline")
-    pyplot.plot(x_axis, mean, label= "mean")
-    pyplot.plot(cutx, cuty, label= "cut")
-    pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
+    # pyplot.plot(x_axis, y_axis, label="data")
+    # pyplot.plot(x_axis, base, label = "baseline")
+    # pyplot.plot(x_axis, mean, label= "mean")
+    # pyplot.plot(cutx, cuty, label= "cut")
+    # pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
+    pyplot.plot(withoutpeaksx, withoutpeaksy, label = "without peaks")
 
 
     pyplot.plot()
