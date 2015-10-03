@@ -77,7 +77,7 @@ def findMean(ys):
 maxtab, mintab = peakdet(y_axis,0.1)
 basel = findMean(y_axis)
 
-def cutdata(x_axis, y_axis):
+def cutdata(x_axis, y_axis, threshold):
     cut = []
     cutx = []
     cuty=[]
@@ -85,8 +85,8 @@ def cutdata(x_axis, y_axis):
     two = numpy.column_stack((x_axis,y_axis))
     variance = numpy.var(asarray(two))
     basel = findMean(y_axis)
-    highcut = basel + ((variance-basel)/15)
-    lowcut = basel - ((variance-basel)/15)
+    highcut = basel + ((variance-basel)/(threshold))
+    lowcut = basel - ((variance-basel)/(threshold))
 
     for a in range (0,len(two)):
         if two[a][1] > lowcut and two[a][1] < highcut:
@@ -99,7 +99,6 @@ def cutdata(x_axis, y_axis):
 
     return cutx, cuty   
 
-
 def meanarray(y_axis):
     mean = []
     meanval = findMean(y_axis)
@@ -107,7 +106,7 @@ def meanarray(y_axis):
         mean.append(float(meanval))
     return mean   
 
-cutx, cuty = cutdata(x_axis, y_axis)
+cutx, cuty = cutdata(x_axis, y_axis,15)
 mean = meanarray(y_axis)
 
 x_axis = asarray(x_axis)
