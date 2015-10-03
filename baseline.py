@@ -96,19 +96,30 @@ def removePeaks(final_peaks, x_axis, y_axis):
     withoutpeaks = []
     withoutpeaksx = []
     withoutpeaksy = []
-    delete = []
+    delete = {}
 
     for peak in final_peaks:
         low, up, area = findArea(peak, x_axis, y_axis, basel)
-        print low
-        print up
+        #print "low : ",low
+        #print "up : ",up
         for a in range (0,len(two)):
             if two[a][0] > low and two[a][0] < up:
-                delete.append(two[a])
+                try:
+                    foo = delete[str(a)]
+                except:
+                    delete[str(a)] = True
 
-    withoutpeaks = numpy.delete(two, delete)
+    # withoutpeaks = numpy.delete(two, delete)
+    withoutpeaks = []
+    for _index in range(len(two)):
+        try:
+            foo = delete[str(_index)]
+            # pass as its meant to be deleted
+        except:
+            withoutpeaks.append(two[_index])
 
     for m in range (0, len(withoutpeaks)):
+        #print m,",",withoutpeaks[m]
         withoutpeaksx.append(withoutpeaks[m][0])
         withoutpeaksy.append(withoutpeaks[m][1])
 
@@ -141,7 +152,7 @@ if __name__=="__main__":
     if len(final_peaks) > 4:
         final_peaks.pop(0)
 
-    print(final_peaks)
+    #print(final_peaks)
 
     withoutpeaksx, withoutpeaksy = removePeaks(final_peaks, x_axis, y_axis)
 
@@ -175,11 +186,11 @@ if __name__=="__main__":
 
     pyplot.figure(figsize=(10,6))
 
-    # pyplot.plot(x_axis, y_axis, label="data")
-    # pyplot.plot(x_axis, base, label = "baseline")
-    # pyplot.plot(x_axis, mean, label= "mean")
-    # pyplot.plot(cutx, cuty, label= "cut")
-    # pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
+    pyplot.plot(x_axis, y_axis, label="data")
+    pyplot.plot(x_axis, base, label = "baseline")
+    pyplot.plot(x_axis, mean, label= "mean")
+    pyplot.plot(cutx, cuty, label= "cut")
+    pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
     pyplot.plot(withoutpeaksx, withoutpeaksy, label = "without peaks")
 
 
