@@ -32,6 +32,9 @@ for pair in pairs:
 	x_axis.append(float(values[0]))
 	y_axis.append(float(values[1]))
 
+two = numpy.column_stack((x_axis,y_axis))
+variance = numpy.var(asarray(two),)
+
 # calc_baseline(x_axis, y_axis)
 # print zeroed_y 
 
@@ -96,18 +99,37 @@ basel = findMean(series)
 x_axis = asarray(x_axis)
 y_axis = asarray(y_axis)
 mean = []
+cut = []
+cutx = []
+cuty=[]
 
 for y in y_axis:
-	meanval = basel
-	mean.append(float(meanval))
+	mean.append(float(basel))
 
+highcut = basel + ((variance-basel)/15)
+lowcut = basel - ((variance-basel)/15)
+
+for a in range (0,len(two)):
+	if two[a][1] > lowcut and two[a][1] < highcut:
+		cut.append(two[a])
+
+
+for m in range (0, len(cut)):
+	cutx.append(cut[m][0])
+	cuty.append(cut[m][1])
 
 base = peakutils.baseline(y_axis, 2)
+cutbase = peakutils.baseline(asarray(cuty), 2)
+
 pyplot.figure(figsize=(10,6))
 
 pyplot.plot(x_axis, y_axis, label="data")
 pyplot.plot(x_axis, base, label = "baseline")
 pyplot.plot(x_axis, mean, label= "mean")
+pyplot.plot(cutx, cuty, label= "cut")
+pyplot.plot(cutx, asarray(cutbase), label = "cut baseline")
+
+pyplot.plot()
 pyplot.legend()
 
 pyplot.show()
